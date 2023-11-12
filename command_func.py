@@ -1,9 +1,11 @@
 import subprocess
 
 
-def execute_func(cmd: str, expected_str: str) -> bool:
+def checkout(cmd: str, text: str) -> bool:
     result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, encoding='utf-8')
-    if result.returncode == 0 and expected_str in result.stdout:
+    if result.returncode == 0 and (text in result.stdout or text in result.stderr):
         return True
 
     return False
+
+
