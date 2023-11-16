@@ -10,42 +10,42 @@ with open('config.yaml') as f:
 class TestPositive:
     def test_step1(self, make_folders, clear_folders, make_files, print_time):
         # test1
-        res1 = checkout("cd {}; 7z a {}/arx".format(data["folder_in"], data["folder_out"]), "Everything is Ok")
-        res2 = checkout("ls {}".format(data["folder_out"]), "arx.7z")
+        res1 = checkout("cd {}; 7z a -t{} {}/arx".format(data["folder_in"], data["archive_type"], data["folder_out"]), "Everything is Ok")
+        res2 = checkout("ls {}".format(data["folder_out"]), "arx.{}".format(data["archive_type"]))
         assert res1 and res2, "test1 FAIL"
 
     def test_step2(self, clear_folders, make_files):
         # test2
         res = []
-        res.append(checkout("cd {}; 7z a {}/arx".format(data["folder_in"], data["folder_out"]), "Everything is Ok"))
+        res.append(checkout("cd {}; 7z a -t{} {}/arx".format(data["folder_in"], data["archive_type"], data["folder_out"]), "Everything is Ok"))
         res.append(
-            checkout("cd {}; 7z e arx.7z -o{} -y".format(data["folder_out"], data["folder_ext"]), "Everything is Ok"))
+            checkout("cd {}; 7z e arx.{} -o{} -y".format(data["folder_out"], data["archive_type"], data["folder_ext"]), "Everything is Ok"))
         for item in make_files:
             res.append(checkout("ls {}".format(data["folder_ext"]), item))
         assert all(res)
 
     def test_step3(self):
         # test3
-        assert checkout("cd {}; 7z t arx.7z".format(data["folder_out"]), "Everything is Ok"), "test3 FAIL"
+        assert checkout("cd {}; 7z t arx.{}".format(data["folder_out"], data["archive_type"]), "Everything is Ok"), "test3 FAIL"
 
     def test_step4(self):
         # test4
-        assert checkout("cd {}; 7z u arx2.7z".format(data["folder_in"]), "Everything is Ok"), "test4 FAIL"
+        assert checkout("cd {}; 7z u arx2.{}".format(data["folder_in"], data["archive_type"]), "Everything is Ok"), "test4 FAIL"
 
     def test_step5(self, clear_folders, make_files):
         # test5
         res = []
-        res.append(checkout("cd {}; 7z a {}/arx".format(data["folder_in"], data["folder_out"]), "Everything is Ok"))
+        res.append(checkout("cd {}; 7z a -t{} {}/arx".format(data["folder_in"], data["archive_type"], data["folder_out"]), "Everything is Ok"))
         for i in make_files:
-            res.append(checkout("cd {}; 7z l arx.7z".format(data["folder_out"], data["folder_ext"]), i))
+            res.append(checkout("cd {}; 7z l arx.{}".format(data["folder_out"], data["archive_type"]), i))
         assert all(res), "test5 FAIL"
 
     def test_step6(self, clear_folders, make_files, make_subfolder):
         # test6
         res = []
-        res.append(checkout("cd {}; 7z a {}/arx".format(data["folder_in"], data["folder_out"]), "Everything is Ok"))
+        res.append(checkout("cd {}; 7z a -t{} {}/arx".format(data["folder_in"], data["archive_type"], data["folder_out"]), "Everything is Ok"))
         res.append(
-            checkout("cd {}; 7z x arx.7z -o{} -y".format(data["folder_out"], data["folder_ext2"]), "Everything is Ok"))
+            checkout("cd {}; 7z x arx.{} -o{} -y".format(data["folder_out"], data["archive_type"], data["folder_ext2"]), "Everything is Ok"))
         for i in make_files:
             res.append(checkout("ls {}".format(data["folder_ext2"]), i))
         res.append(checkout("ls {}".format(data["folder_ext2"]), make_subfolder[0]))
@@ -54,7 +54,7 @@ class TestPositive:
 
     def test_step7(self):
         # test7
-        assert checkout("cd {}; 7z d arx.7z".format(data["folder_out"]), "Everything is Ok"), "test7 FAIL"
+        assert checkout("cd {}; 7z d arx.{}".format(data["folder_out"], data["archive_type"]), "Everything is Ok"), "test7 FAIL"
 
     def test_step8(self, clear_folders, make_files):
         # test8

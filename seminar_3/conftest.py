@@ -1,3 +1,4 @@
+import os.path
 import random
 import string
 from datetime import datetime
@@ -5,7 +6,7 @@ from datetime import datetime
 import pytest
 import yaml
 
-from checkers import checkout
+from checkers import checkout, getout
 
 with open('config.yaml') as f:
     # читаем документ YAML
@@ -54,3 +55,13 @@ def print_time():
     print("Start: {}".format(datetime.now().strftime("%H:%M:%S.%f")))
     yield
     print("Finish: {}".format(datetime.now().strftime("%H:%M:%S.%f")))
+
+
+@pytest.fixture(autouse=True)
+def write_stat():
+    yield
+    proc_loadavg = getout("cat /proc/loadavg")
+    time = datetime.now().strftime("%H:%M:%S.%f")
+    with open(data["stat_file"], "a+") as file:
+        file.write(f'time: {time}; count: {data["count"]}; bs: {data["bs"]}; proc_loadavg: {proc_loadavg}')
+
