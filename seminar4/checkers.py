@@ -1,6 +1,21 @@
 import subprocess
 
 import paramiko
+from functools import wraps
+
+import yaml
+
+with open('config.yaml') as f:
+    # читаем документ YAML
+    data = yaml.safe_load(f)
+
+
+def ssh_wpapper(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return func(data["host"], data["user"], data["passwd"], args, kwargs, port=data["port"])
+
+    return wrapper
 
 
 def checkout(cmd, text):
@@ -20,6 +35,7 @@ def checkout_negative(cmd, text):
         return False
 
 
+@ssh_wpapper
 def ssh_checkout(host, user, passwd, cmd, text, port=22):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -34,6 +50,7 @@ def ssh_checkout(host, user, passwd, cmd, text, port=22):
         return False
 
 
+@ssh_wpapper
 def ssh_checkout_negative(host, user, passwd, cmd, text, port=22):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -48,6 +65,7 @@ def ssh_checkout_negative(host, user, passwd, cmd, text, port=22):
         return False
 
 
+@ssh_wpapper
 def ssh_getout(host, user, passwd, cmd, port=22):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
